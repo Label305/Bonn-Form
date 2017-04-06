@@ -5,7 +5,7 @@ export class Form {
     private fieldListeners: { [fieldName: string]: Array<(value: any) => void> } = {};
 
     public getFieldValue(fieldName: string): any {
-        return this.values[fieldName];
+        return this.values[fieldName] || '';
     }
 
     public setFieldValue(fieldName: string, value: any) {
