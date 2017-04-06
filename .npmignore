@@ -1,0 +1,13 @@
+src/
+tests/
+typings/
+.idea
+node_modules
+example
+npm-debug.log
+.babelrc
+.travis.yml
+build/**/*.ts
+tsconfig.json
+typings.json
+

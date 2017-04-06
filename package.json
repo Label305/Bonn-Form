@@ -1,0 +1,29 @@
+{
+  "name": "bonn-form",
+  "version": "0.1.0",
+  "description": "Form handling for React with size in mind",
+  "main": "./build/bonn.js",
+  "repository": {},
+  "author": "Joris Blaak <joris@label305.com>",
+  "license": "MIT",
+  "scripts": {
+    "prepublish": "yarn declarations && yarn declaration-bundle && yarn build",
+    "build": "rm -rf ./build && ./node_modules/.bin/tsc",
+    "pretest": "./node_modules/.bin/tsc --project ./node_modules/.bin/tsconfig.test.json",
+    "test": "yarn lint && yarn mocha",
+    "lint": "tslint ./src/*.ts ./src/**/*.ts",
+    "mocha": "nyc --reporter=lcov --reporter=text --check-coverage --lines 100  --functions 100 --branches 100 mocha tests --recursive",
+    "declarations": "./node_modules/.bin/tsc --declaration",
+    "declaration-bundle": "dts-bundle --name bonn-form --out ./bonn-form.d.ts --main ./build/bonn-form.d.ts && mv ./build/bonn-form.d.ts ./bonn-form.d.ts"
+  },
+  "devDependencies": {
+    "@types/expect.js": "^0.3.29",
+    "@types/mocha": "^2.2.32",
+    "@types/node": "^6.0.46",
+    "dts-bundle": "^0.6.1",
+    "mocha": "^3.1.2",
+    "nyc": "^8.3.2",
+    "tslint": "^4.2.0",
+    "typescript": "^2.2.2"
+  }
+}
