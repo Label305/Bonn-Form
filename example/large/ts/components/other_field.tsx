@@ -15,4 +15,4 @@ class OtherField extends React.Component<OwnProps & FieldProps & FormProps, {}> 
     }
 }
 
-export default Field<OwnProps>('otherField', OtherField);
+export default Field<OwnProps>(OtherField, 'otherField');

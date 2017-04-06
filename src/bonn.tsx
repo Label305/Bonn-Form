@@ -5,7 +5,6 @@ export interface FormProps {
     form: Form
 }
 
-
 type IncomingForm<Props> = new () => React.Component<Props & FormProps, any>;
 type OutgoingForm<Props> = new () => React.Component<Props, any> ;
 
@@ -23,6 +22,7 @@ export function Bonn<Props>(WrappedComponent: IncomingForm<Props>): OutgoingForm
 
 export interface FieldProps {
     value: any;
+    validationError: string | undefined;
     onChange: (value: any) => void;
 }
 
@@ -68,15 +68,12 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
         public render() {
             return <WrappedComponent
                 {...this.props}
-                value={this.props.form.getFieldValue(this.getFieldName())}
+                value={this.state.value}
+                validationError={this.props.form.getValidationError(this.getFieldName())}
                 onChange={this.handleChange.bind(this)}
             />
         }
     }
-}
-
-
-export interface ListenerProps {
 }
 
 export interface ListenerState {
