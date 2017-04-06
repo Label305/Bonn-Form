@@ -5,7 +5,7 @@ interface OwnProps {
 
 }
 
-class SomeField extends React.Component<OwnProps & FieldProps & FormProps, {}> {
+class OtherField extends React.Component<OwnProps & FieldProps & FormProps, {}> {
     render() {
         return <div>
             <input
@@ -15,4 +15,4 @@ class SomeField extends React.Component<OwnProps & FieldProps & FormProps, {}> {
     }
 }
 
-export default Field<OwnProps>('myField', SomeField);
+export default Field<OwnProps>('otherField', OtherField);
