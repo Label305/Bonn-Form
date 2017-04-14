@@ -7,24 +7,38 @@
   "author": "Joris Blaak <joris@label305.com>",
   "license": "MIT",
   "scripts": {
-    "prepublish": "yarn declarations && yarn declaration-bundle && yarn build",
+    "prepublish": "yarn build",
     "build": "rm -rf ./build && ./node_modules/.bin/tsc",
-    "pretest": "./node_modules/.bin/tsc --project ./node_modules/.bin/tsconfig.test.json",
-    "test": "yarn lint && yarn mocha",
+    "test": "yarn lint && jest",
+    "test:watch": "jest --watch",
     "lint": "tslint ./src/*.ts ./src/**/*.ts",
-    "mocha": "nyc --reporter=lcov --reporter=text --check-coverage --lines 100  --functions 100 --branches 100 mocha tests --recursive",
-    "declarations": "./node_modules/.bin/tsc --declaration",
-    "declaration-bundle": "dts-bundle --name bonn-form --out ./bonn-form.d.ts --main ./build/bonn-form.d.ts && mv ./build/bonn-form.d.ts ./bonn-form.d.ts"
+    "lint:fix": "tslint ./src/*.ts ./src/**/*.ts --fix"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx|php)$": "<rootDir>/preprocessor.jest.js"
+    },
+    "testRegex": "/tests/(?!__support__).*\\.(ts|tsx|js)$"
   },
   "devDependencies": {
-    "@types/expect.js": "^0.3.29",
-    "@types/mocha": "^2.2.32",
+    "@types/enzyme": "^2.7.8",
+    "@types/jest": "^19.2.2",
     "@types/node": "^6.0.46",
     "@types/react": "^15.0.21",
-    "dts-bundle": "^0.6.1",
-    "mocha": "^3.1.2",
-    "nyc": "^8.3.2",
-    "react": "^15.4.2",
+    "@types/react-addons-test-utils": "^0.14.17",
+    "@types/react-dom": "^0.14.23",
+    "@types/react-test-renderer": "^15.4.3",
+    "enzyme": "^2.8.2",
+    "jest": "^19.0.2",
+    "react": "^15.5.4",
+    "react-addons-test-utils": "^15.5.1",
+    "react-dom": "^15.5.4",
+    "react-test-renderer": "^15.5.4",
     "tslint": "^4.2.0",
     "typescript": "^2.2.2"
   }

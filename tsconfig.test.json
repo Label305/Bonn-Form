@@ -8,6 +8,6 @@
     "strictNullChecks": true
   },
   "files": [
-    "./tests/bonn.test.ts"
+    "./tests/bonn.test.tsx"
   ]
 }

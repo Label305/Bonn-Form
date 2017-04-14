@@ -15,14 +15,14 @@ export class Form {
         delete this.validationErrors[fieldName];
 
         if (typeof this.fieldListeners[fieldName] !== 'undefined') {
-            this.fieldListeners[fieldName].forEach(callback => callback(value));
+            this.fieldListeners[fieldName].forEach((callback) => callback(value));
         }
     }
 
     public setValidationErrors(errors: { [fieldName: string]: string }) {
         this.validationErrors = errors;
         for (const fieldName in this.validationErrors) {
-            this.fieldListeners[fieldName].forEach(callback => callback(this.getFieldValue(fieldName)));
+            this.fieldListeners[fieldName].forEach((callback) => callback(this.getFieldValue(fieldName)));
         }
     }
 
