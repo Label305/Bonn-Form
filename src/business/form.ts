@@ -10,21 +10,28 @@ export class Form {
         return this.values[fieldName] || '';
     }
 
+    public setFieldValues(values: { [fieldName: string]: any }) {
+        const fieldNames = Object.keys(values);
+        fieldNames.forEach((fieldName) => {
+            this.values[fieldName] = values[fieldName];
+            delete this.validationErrors[fieldName];
+        });
+
+        this.triggerMultipleFieldListeners(fieldNames);
+    }
+
     public setFieldValue(fieldName: string, value: any) {
         this.values[fieldName] = value;
         delete this.validationErrors[fieldName];
 
-        if (typeof this.fieldListeners[fieldName] !== 'undefined') {
-            this.fieldListeners[fieldName].forEach((callback) => callback(value));
-        }
+        this.triggerFieldListeners(fieldName);
     }
 
     public setValidationErrors(errors: { [fieldName: string]: string }) {
         this.validationErrors = errors;
 
-        Object.keys(this.validationErrors).forEach((fieldName) => {
-            this.fieldListeners[fieldName].forEach((callback) => callback(this.getFieldValue(fieldName)));
-        });
+        const fieldNames = Object.keys(this.validationErrors);
+        this.triggerMultipleFieldListeners(fieldNames);
     }
 
     public getValidationError(fieldName: string): string | undefined {
@@ -37,4 +44,17 @@ export class Form {
         }
         this.fieldListeners[fieldName].push(callback);
     }
+
+    private triggerMultipleFieldListeners(fieldNames: string[]) {
+        fieldNames.forEach((fieldName) => {
+            this.triggerFieldListeners(fieldName);
+        });
+    }
+
+    private triggerFieldListeners(fieldName: string) {
+        if (typeof this.fieldListeners[fieldName] !== 'undefined') {
+            this.fieldListeners[fieldName].forEach((callback) => callback(this.getFieldValue(fieldName)));
+        }
+    }
+
 }

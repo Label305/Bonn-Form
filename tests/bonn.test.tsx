@@ -23,6 +23,129 @@ describe('Bonn', function () {
         expect(passedForm).not.toBeNull();
     });
 
+    it('should be able to pass bunch of initial fields at once during initialization', function () {
+        /* Given */
+        let passedForm: Form | null = null;
+        class MyWrappedComponent extends React.Component<FormProps, {}> {
+            render() {
+                passedForm = this.props.form;
+                return <div></div>
+            }
+        }
+
+        /* When */
+        const Component = Bonn<{}>(MyWrappedComponent);
+        const values = {
+            'foo': 'bar',
+            'blub': 'blab'
+        };
+        mount(<Component values={values}/>);
+
+        /* Then */
+        expect(passedForm.getFieldValue('foo')).toBe('bar');
+        expect(passedForm.getFieldValue('blub')).toBe('blab');
+    });
+
+    it('should propagate changed initial values', function () {
+        /* Given */
+        let passedForm: Form | null = null;
+        class MyWrappedComponent extends React.Component<FormProps, {}> {
+            render() {
+                passedForm = this.props.form;
+                return <div></div>
+            }
+        }
+
+        /* When */
+        const Component = Bonn<{}>(MyWrappedComponent);
+        const values = {
+            'foo': 'bar',
+            'blub': 'blab'
+        };
+        const result = mount(<Component values={values}/>);
+        result.setProps({
+            values: {
+                'foo': 'bar',
+                'blub': 'blob'
+            }
+        });
+
+        /* Then */
+        expect(passedForm.getFieldValue('foo')).toBe('bar');
+        expect(passedForm.getFieldValue('blub')).toBe('blob');
+    });
+
+    it('should handle newly added initial value', function () {
+        /* Given */
+        let passedForm: Form | null = null;
+        class MyWrappedComponent extends React.Component<FormProps, {}> {
+            render() {
+                passedForm = this.props.form;
+                return <div></div>
+            }
+        }
+
+        /* When */
+        const Component = Bonn<{}>(MyWrappedComponent);
+        const values = {
+            'foo': 'bar',
+            'blub': 'blab'
+        };
+        const result = mount(<Component values={values}/>);
+        result.setProps({
+            values: {
+                'foo': 'bar',
+                'blub': 'blab',
+                'woo': 'waa',
+            }
+        });
+
+        /* Then */
+        expect(passedForm.getFieldValue('foo')).toBe('bar');
+        expect(passedForm.getFieldValue('blub')).toBe('blab');
+        expect(passedForm.getFieldValue('woo')).toBe('waa');
+    });
+
+    it('should only trigger changed listeners of changed fields while propagating updated initial value', function () {
+        /* Given */
+        let passedForm: Form | null = null;
+        let numberOfTimesFooListenerTriggered = 0;
+        let numberOfTimesBlubListenerTriggered = 0;
+        class MyWrappedComponent extends React.Component<FormProps, {}> {
+            componentWillMount() {
+                this.props.form.listenForFieldChange('foo', () => {
+                    numberOfTimesFooListenerTriggered++;
+                });
+                this.props.form.listenForFieldChange('blub', () => {
+                    numberOfTimesBlubListenerTriggered++;
+                });
+            }
+
+            render() {
+                passedForm = this.props.form;
+                return <div></div>
+            }
+        }
+
+        /* When */
+        const Component = Bonn<{}>(MyWrappedComponent);
+        const values = {
+            'foo': 'bar',
+            'blub': 'blab'
+        };
+        const result = mount(<Component values={values}/>);
+        result.setProps({
+            values: {
+                'foo': 'bar',
+                'blub': 'blob'
+            }
+        });
+
+        /* Then */
+        expect(numberOfTimesFooListenerTriggered).toBe(0);
+        expect(numberOfTimesBlubListenerTriggered).toBe(1);
+    });
+
     describe('Field', function () {
 
         it('should pass changed value to form object', function () {
