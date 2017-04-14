@@ -28,8 +28,10 @@ export function Listener<Props>(WrappedComponent: IncomingListener<Props>, field
         public componentDidMount() {
             fieldNames.forEach(fieldName => {
                 this.props.form.listenForFieldChange(fieldName, (value: any) => {
+                    const values = {...this.state.values};
+                    values[fieldName] = value;
                     this.setState({
-                        values: this.getValues()
+                        values: values
                     });
                 })
             });
