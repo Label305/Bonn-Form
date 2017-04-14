@@ -239,6 +239,55 @@ describe('Bonn', function () {
 
             /* Then */
             expect(form.getFieldValue('field')).toBe('Hello');
+        });
+
+        it('should receive validation error', function () {
+            /* Given */
+            const form = new Form();
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field"/>
+                        {this.props.validationError}
+                    </div>
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When */
+            const result = mount(<Component name="field" form={form}/>);
+            form.setValidationErrors({
+                'field': 'Foutje'
+            });
+
+            /* Then */
+            expect(result.text()).toContain('Foutje');
+        });
+
+        it('should clear validation error when value is updated', function () {
+            /* Given */
+            const form = new Form();
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field"/>
+                        {this.props.validationError}
+                    </div>
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When */
+            const result = mount(<Component name="field" form={form}/>);
+            form.setValidationErrors({
+                'field': 'Foutje'
+            });
+            form.setFieldValue('field', 'Howdy');
+
+            /* Then */
+            expect(result.text()).not.toContain('Foutje');
         })
 
     });
