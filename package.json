@@ -1,0 +1,45 @@
+{
+  "name": "bonn-form",
+  "version": "0.1.0",
+  "description": "Form handling for React with size in mind",
+  "main": "./build/bonn.js",
+  "repository": {},
+  "author": "Joris Blaak <joris@label305.com>",
+  "license": "MIT",
+  "scripts": {
+    "prepublish": "yarn build",
+    "build": "rm -rf ./build && ./node_modules/.bin/tsc",
+    "test": "yarn lint && jest",
+    "test:watch": "jest --watch",
+    "lint": "tslint ./src/*.ts ./src/**/*.ts",
+    "lint:fix": "tslint ./src/*.ts ./src/**/*.ts --fix"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx|php)$": "<rootDir>/preprocessor.jest.js"
+    },
+    "testRegex": "/tests/(?!__support__).*\\.(ts|tsx|js)$"
+  },
+  "devDependencies": {
+    "@types/enzyme": "^2.7.8",
+    "@types/jest": "^19.2.2",
+    "@types/node": "^6.0.46",
+    "@types/react": "^15.0.21",
+    "@types/react-addons-test-utils": "^0.14.17",
+    "@types/react-dom": "^0.14.23",
+    "@types/react-test-renderer": "^15.4.3",
+    "enzyme": "^2.8.2",
+    "jest": "^19.0.2",
+    "react": "^15.5.4",
+    "react-addons-test-utils": "^15.5.1",
+    "react-dom": "^15.5.4",
+    "react-test-renderer": "^15.5.4",
+    "tslint": "^4.2.0",
+    "typescript": "^2.2.2"
+  }
+}

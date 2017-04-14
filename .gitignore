@@ -1,0 +1,11 @@
+.idea
+node_modules
+build
+npm-debug.log
+/tests/**/*.js
+/tests/**/*.js.map
+/src/**/*.js
+/src/**/*.js.map
+/bonn-form.d.ts
+/coverage/
+/.nyc_output/
