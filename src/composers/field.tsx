@@ -8,6 +8,7 @@ export interface FieldProps {
 
 interface OwnProps {
     name?: string;
+    value?: string;
 }
 
 type IncomingField<Props> = new () => React.Component<Props & FieldProps, any>;
@@ -31,6 +32,18 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
                 return nameFromProp;
             }
             throw new Error('Could not resolve field name');
+        }
+
+        public componentWillMount() {
+            if (typeof this.props.value !== null) {
+                this.props.form.setFieldValue(this.getFieldName(), this.props.value);
+            }
+        }
+
+        public componentWillUpdate(nextProps: Props & OwnProps & FormProps) {
+            if (typeof nextProps.value !== null && this.props.value !== nextProps.value) {
+                this.props.form.setFieldValue(this.getFieldName(), nextProps.value);
+            }
         }
 
         public componentDidMount() {

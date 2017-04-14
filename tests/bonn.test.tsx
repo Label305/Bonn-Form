@@ -50,6 +50,49 @@ describe('Bonn', function () {
             expect(form.getFieldValue('field')).toBe('Hello');
         });
 
+        it('should use initial value', function () {
+            /* Given */
+            const form = new Form();
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field" onChange={(e: any) => this.props.onChange(e.target.value)}/>
+                    </div>
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When */
+            mount(<Component form={form} value="Hello" name="field"/>);
+
+            /* Then */
+            expect(form.getFieldValue('field')).toBe('Hello');
+        });
+
+        it('should update value if value in props changes', function () {
+            /* Given */
+            const form = new Form();
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field" onChange={(e: any) => this.props.onChange(e.target.value)}/>
+                    </div>
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When */
+            const result = mount(<Component form={form} value="Hello" name="field"/>);
+            result.setProps({
+                value: "Hi"
+            });
+
+            /* Then */
+            expect(form.getFieldValue('field')).toBe('Hi');
+        });
+
         it('should pass use given name from props', function () {
             /* Given */
             const form = new Form();
