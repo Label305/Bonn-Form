@@ -21,9 +21,10 @@ export class Form {
 
     public setValidationErrors(errors: { [fieldName: string]: string }) {
         this.validationErrors = errors;
-        for (const fieldName in this.validationErrors) {
+
+        Object.keys(this.validationErrors).forEach((fieldName) => {
             this.fieldListeners[fieldName].forEach((callback) => callback(this.getFieldValue(fieldName)));
-        }
+        });
     }
 
     public getValidationError(fieldName: string): string | undefined {

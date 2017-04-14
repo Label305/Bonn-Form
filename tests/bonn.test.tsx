@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Bonn, Field, FieldProps, FormProps, Listener} from '../src/bonn';
-import {Form} from '../src/form';
+import {Form} from '../src/business/form';
 import {mount} from 'enzyme';
 
 describe('Bonn', function () {
