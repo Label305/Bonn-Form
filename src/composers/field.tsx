@@ -35,13 +35,13 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
         }
 
         public componentWillMount() {
-            if (typeof this.props.value !== null) {
+            if (typeof this.props.value !== 'undefined') {
                 this.props.form.setFieldValue(this.getFieldName(), this.props.value);
             }
         }
 
         public componentWillUpdate(nextProps: Props & OwnProps & FormProps) {
-            if (typeof nextProps.value !== null && this.props.value !== nextProps.value) {
+            if (typeof nextProps.value !== 'undefined' && this.props.value !== nextProps.value) {
                 this.props.form.setFieldValue(this.getFieldName(), nextProps.value);
             }
         }
@@ -51,7 +51,7 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
                 this.setState({
                     value: value
                 });
-            })
+            });
         }
 
         private handleChange(value: any) {
@@ -64,8 +64,7 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
                 value={this.state.value}
                 validationError={this.props.form.getValidationError(this.getFieldName())}
                 onChange={this.handleChange.bind(this)}
-            />
+            />;
         }
-    }
+    };
 }
-

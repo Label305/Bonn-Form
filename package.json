@@ -11,8 +11,8 @@
     "build": "rm -rf ./build && ./node_modules/.bin/tsc",
     "test": "yarn lint && jest",
     "test:watch": "jest --watch",
-    "lint": "tslint ./src/*.ts ./src/**/*.ts",
-    "lint:fix": "tslint ./src/*.ts ./src/**/*.ts --fix"
+    "lint": "tslint -p ./tsconfig.json",
+    "lint:fix": "tslint -p ./tsconfig.json --fix"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -40,6 +40,7 @@
     "react-dom": "^15.5.4",
     "react-test-renderer": "^15.5.4",
     "tslint": "^5.1.0",
+    "tslint-eslint-rules": "^4.0.0",
     "typescript": "^2.2.2"
   }
 }
