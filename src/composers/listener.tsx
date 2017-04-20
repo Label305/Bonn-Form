@@ -2,7 +2,7 @@ import * as React from 'react';
 import {FormProps} from './bonn';
 
 export interface ListenerState {
-    values: any
+    values: any;
 }
 
 type IncomingListener<Props> = new () => React.Component<Props & FormProps, any>;
@@ -33,13 +33,12 @@ export function Listener<Props>(WrappedComponent: IncomingListener<Props>, field
                     this.setState({
                         values: values
                     });
-                })
+                });
             });
         }
 
         public render() {
-            return <WrappedComponent {...this.props} {...this.state.values}/>
+            return <WrappedComponent {...this.props} {...this.state.values}/>;
         }
-    }
+    };
 }
-

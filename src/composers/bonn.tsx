@@ -5,7 +5,7 @@ export interface FormProps {
 }
 
 interface OwnProps {
-    values?: { [fieldName: string]: any }
+    values?: { [fieldName: string]: any };
 }
 
 type IncomingForm<Props> = new () => React.Component<Props & FormProps, any>;
@@ -40,8 +40,7 @@ export function Bonn<Props>(WrappedComponent: IncomingForm<Props>): OutgoingForm
         }
 
         public render() {
-            return <WrappedComponent {...this.props} form={this.form}/>
+            return <WrappedComponent {...this.props} form={this.form}/>;
         }
-    }
+    };
 }
-
