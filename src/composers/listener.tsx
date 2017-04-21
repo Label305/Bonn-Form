@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {FormProps} from './bonn';
+import {Listener} from '../business/field_listener_repository';
 
 export interface ListenerState {
     values: any;
@@ -16,6 +17,8 @@ export function Listener<Props>(WrappedComponent: IncomingListener<Props>, field
             values: this.getValues()
         };
 
+        private listeners: Listener[] = [];
+
         public getValues(): any {
             const result: any = {};
             fieldNames.forEach(fieldName => {
@@ -27,14 +30,19 @@ export function Listener<Props>(WrappedComponent: IncomingListener<Props>, field
 
         public componentDidMount() {
             fieldNames.forEach(fieldName => {
-                this.props.form.listenForFieldChange(fieldName, (value: any) => {
+                const listener = this.props.form.subscribe(fieldName, (value: any) => {
                     const values = {...this.state.values};
                     values[fieldName] = value;
                     this.setState({
                         values: values
                     });
                 });
+                this.listeners.push(listener);
             });
+        }
+
+        public componentWillUnmount() {
+            this.listeners.forEach(listener => this.props.form.unsubscribe(listener));
         }
 
         public render() {

@@ -2,6 +2,7 @@ import * as React from 'react';
 import {Bonn, Field, FieldProps, FormProps, Listener} from '../src/bonn';
 import {Form} from '../src/business/form';
 import {mount} from 'enzyme';
+import {FieldListenerRepositoryImpl} from '../src/business/field_listener_repository';
 
 describe('Bonn', function () {
 
@@ -113,10 +114,10 @@ describe('Bonn', function () {
         let numberOfTimesBlubListenerTriggered = 0;
         class MyWrappedComponent extends React.Component<FormProps, {}> {
             componentWillMount() {
-                this.props.form.listenForFieldChange('foo', () => {
+                this.props.form.subscribe('foo', () => {
                     numberOfTimesFooListenerTriggered++;
                 });
-                this.props.form.listenForFieldChange('blub', () => {
+                this.props.form.subscribe('blub', () => {
                     numberOfTimesBlubListenerTriggered++;
                 });
             }
@@ -288,8 +289,56 @@ describe('Bonn', function () {
 
             /* Then */
             expect(result.text()).not.toContain('Foutje');
-        })
+        });
 
+        it('should unsubscribe its listeners when component is unmounted', function () {
+            /* Given */
+            const fieldListenerRepositoryImpl = new FieldListenerRepositoryImpl();
+            const form = new Form(fieldListenerRepositoryImpl);
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field"/>
+                        {this.props.validationError}
+                    </div>
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When */
+            const result = mount(<Component name="field" form={form}/>);
+            result.unmount();
+
+            /* Then */
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('field')).not.toBeUndefined();
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('field').length).toBe(0);
+        });
+        
+        it('should leave listeners that are listening to the same field', function () {
+            /* Given */
+            const fieldListenerRepositoryImpl = new FieldListenerRepositoryImpl();
+            const form = new Form(fieldListenerRepositoryImpl);
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field"/>
+                        {this.props.validationError}
+                    </div>
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When */
+            const first = mount(<Component name="field" form={form}/>);
+            first.unmount();
+            const second = mount(<Component name="field" form={form}/>);
+
+            /* Then */
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('field')).not.toBeUndefined();
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('field').length).toBe(1);
+        });
     });
 
     describe('Listener', function () {
@@ -349,6 +398,54 @@ describe('Bonn', function () {
             expect(numRendersForComponent).toBe(2);
         });
 
+        it('should unsubscribe its listeners when component is unmounted', function () {
+            /* Given */
+            const fieldListenerRepositoryImpl = new FieldListenerRepositoryImpl();
+            const form = new Form(fieldListenerRepositoryImpl);
+
+            class MyComponent extends React.Component<FormProps, {}> {
+                render() {
+                    return <div></div>
+                }
+            }
+
+            /* When */
+            const Component = Listener<{}>(MyComponent, ['field']);
+            
+            /* When */
+            const result = mount(<Component form={form}/>);
+            result.unmount();
+
+            /* Then */
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('field')).not.toBeUndefined();
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('field').length).toBe(0);
+        });
+        
+        it('should unsubscribe multiple listeners when component is unmounted', function () {
+            /* Given */
+            const fieldListenerRepositoryImpl = new FieldListenerRepositoryImpl();
+            const form = new Form(fieldListenerRepositoryImpl);
+
+            class MyComponent extends React.Component<FormProps, {}> {
+                render() {
+                    return <div></div>
+                }
+            }
+
+            /* When */
+            const Component = Listener<{}>(MyComponent, ['field', 'other']);
+            
+            /* When */
+            const result = mount(<Component form={form}/>);
+            result.unmount();
+
+            /* Then */
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('field')).not.toBeUndefined();
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('other')).not.toBeUndefined();
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('field').length).toBe(0);
+            expect(fieldListenerRepositoryImpl.getFieldListenersForFieldName('other').length).toBe(0);
+        });
+        
     });
 
 });

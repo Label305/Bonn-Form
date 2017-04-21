@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {FormProps} from './bonn';
+import {Listener} from '../business/field_listener_repository';
 export interface FieldProps {
     value: any;
     validationError: string | undefined;
@@ -23,6 +24,8 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
             value: this.props.form.getFieldValue(this.getFieldName())
         };
 
+        private listener: Listener;
+
         public getFieldName(): string {
             if (fieldName !== null) {
                 return fieldName;
@@ -40,6 +43,10 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
             }
         }
 
+        public componentWillUnmount() {
+            this.props.form.unsubscribe(this.listener);
+        }
+
         public componentWillUpdate(nextProps: Props & OwnProps & FormProps) {
             if (typeof nextProps.value !== 'undefined' && this.props.value !== nextProps.value) {
                 this.props.form.setFieldValue(this.getFieldName(), nextProps.value);
@@ -47,7 +54,7 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
         }
 
         public componentDidMount() {
-            this.props.form.listenForFieldChange(this.getFieldName(), (value: any) => {
+            this.listener = this.props.form.subscribe(this.getFieldName(), (value: any) => {
                 this.setState({
                     value: value
                 });
