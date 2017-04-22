@@ -19,7 +19,7 @@ export function Bonn<Props>(WrappedComponent: IncomingForm<Props>): OutgoingForm
         public componentWillMount() {
             const values = this.props.values;
             if (typeof values !== 'undefined') {
-                this.form.setFieldValues(values as  { [fieldName: string]: any });
+                this.form.setFieldValues(values as  { [fieldName: string]: any }, true);
             }
         }
 
@@ -34,7 +34,7 @@ export function Bonn<Props>(WrappedComponent: IncomingForm<Props>): OutgoingForm
                         }
                     }
                 });
-                this.form.setFieldValues(updatedValues);
+                this.form.setFieldValues(updatedValues, true);
 
             }
         }

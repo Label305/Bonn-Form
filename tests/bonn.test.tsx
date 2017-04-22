@@ -42,8 +42,8 @@ describe('Bonn', function () {
         mount(<Component values={values}/>);
 
         /* Then */
-        expect(passedForm.getFieldValue('foo')).toBe('bar');
-        expect(passedForm.getFieldValue('blub')).toBe('blab');
+        expect(passedForm.getFieldState('foo').value).toBe('bar');
+        expect(passedForm.getFieldState('blub').value).toBe('blab');
     });
 
     it('should propagate changed initial values', function () {
@@ -71,8 +71,8 @@ describe('Bonn', function () {
         });
 
         /* Then */
-        expect(passedForm.getFieldValue('foo')).toBe('bar');
-        expect(passedForm.getFieldValue('blub')).toBe('blob');
+        expect(passedForm.getFieldState('foo').value).toBe('bar');
+        expect(passedForm.getFieldState('blub').value).toBe('blob');
     });
 
     it('should handle newly added initial value', function () {
@@ -101,9 +101,9 @@ describe('Bonn', function () {
         });
 
         /* Then */
-        expect(passedForm.getFieldValue('foo')).toBe('bar');
-        expect(passedForm.getFieldValue('blub')).toBe('blab');
-        expect(passedForm.getFieldValue('woo')).toBe('waa');
+        expect(passedForm.getFieldState('foo').value).toBe('bar');
+        expect(passedForm.getFieldState('blub').value).toBe('blab');
+        expect(passedForm.getFieldState('woo').value).toBe('waa');
     });
 
     it('should only trigger changed listeners of changed fields while propagating updated initial value', function () {
@@ -170,7 +170,7 @@ describe('Bonn', function () {
             });
 
             /* Then */
-            expect(form.getFieldValue('field')).toBe('Hello');
+            expect(form.getFieldState('field').value).toBe('Hello');
         });
 
         it('should use initial value', function () {
@@ -190,7 +190,7 @@ describe('Bonn', function () {
             mount(<Component form={form} value="Hello" name="field"/>);
 
             /* Then */
-            expect(form.getFieldValue('field')).toBe('Hello');
+            expect(form.getFieldState('field').value).toBe('Hello');
         });
 
         it('should update value if value in props changes', function () {
@@ -213,7 +213,7 @@ describe('Bonn', function () {
             });
 
             /* Then */
-            expect(form.getFieldValue('field')).toBe('Hi');
+            expect(form.getFieldState('field').value).toBe('Hi');
         });
 
         it('should pass use given name from props', function () {
@@ -238,7 +238,7 @@ describe('Bonn', function () {
             });
 
             /* Then */
-            expect(form.getFieldValue('field')).toBe('Hello');
+            expect(form.getFieldState('field').value).toBe('Hello');
         });
 
         it('should receive validation error', function () {
@@ -288,7 +288,73 @@ describe('Bonn', function () {
 
             /* Then */
             expect(result.text()).not.toContain('Foutje');
-        })
+        });
+
+        it('should be a pristine field when the field is untouched', function () {
+            /* Given */
+            const form = new Form();
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field"/>
+                    </div>;
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When*/
+            const result = mount(<Component name="field" value="klaas" form={form}/>);
+
+            expect(form.getFieldState('field').value).toBe('klaas');
+            expect(form.getFieldState('field').pristine).toBe(true);
+        });
+
+        it('should not be pristine if the field receives a new value', function () {
+            /* Given */
+            const form = new Form();
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field"/>
+                    </div>;
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When*/
+            const result = mount(<Component name="field" value="klaas" form={form}/>);
+            form.setFieldValue('field', 'blaat');
+
+            expect(form.getFieldState('field').value).toBe('blaat');
+            expect(form.getFieldState('field').pristine).toBe(false);
+        });
+
+        it('should not be pristine again if the prop value changed', function () {
+            /* Given */
+            const form = new Form();
+
+            class MyField extends React.Component<FieldProps, {}> {
+                render() {
+                    return <div>
+                        <input name="field"/>
+                    </div>;
+                }
+            }
+            const Component = Field<{}>(MyField);
+
+            /* When*/
+            const result = mount(<Component name="field" value="klaas" form={form}/>);
+            form.setFieldValue('field', 'blaat');
+
+            result.setProps({
+                'value': 'piet'
+            });
+
+            expect(form.getFieldState('field').value).toBe('piet');
+            expect(form.getFieldState('field').pristine).toBe(true);
+        });
 
     });
 
@@ -317,7 +383,7 @@ describe('Bonn', function () {
             form.setFieldValue('field', 'blub');
 
             /* Then */
-            expect(lastFieldValue).toBe('blub');
+            expect(lastFieldValue.value).toBe('blub');
         });
 
         it('should not trigger updates when not component is not listening to certain field', function () {

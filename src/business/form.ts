@@ -1,44 +1,56 @@
+export interface FieldState {
+    value: any;
+    validationError?: string;
+    pristine: boolean;
+}
+
 export class Form {
 
-    private values: { [key: string]: any } = {};
-
-    private validationErrors: { [fieldName: string]: any } = {};
-
+    private fieldStates: { [key: string]: FieldState } = {};
     private fieldListeners: { [fieldName: string]: Array<(value: any) => void> } = {};
 
-    public getFieldValue(fieldName: string): any {
-        return this.values[fieldName] || '';
+    public getFieldState(fieldName: string): FieldState | undefined {
+        return this.fieldStates[fieldName];
     }
 
-    public setFieldValues(values: { [fieldName: string]: any }) {
+    public setFieldValues(values: { [fieldName: string]: any }, pristineValues = false) {
         const fieldNames = Object.keys(values);
         fieldNames.forEach((fieldName) => {
-            this.values[fieldName] = values[fieldName];
-            delete this.validationErrors[fieldName];
+            this.updateFieldValue(fieldName, values[fieldName], pristineValues);
         });
 
         this.triggerMultipleFieldListeners(fieldNames);
     }
 
-    public setFieldValue(fieldName: string, value: any) {
-        this.values[fieldName] = value;
-        delete this.validationErrors[fieldName];
+    public setFieldValue(fieldName: string, value: any, pristineValue = false) {
+        this.updateFieldValue(fieldName, value, pristineValue);
 
         this.triggerFieldListeners(fieldName);
     }
 
-    public setValidationErrors(errors: { [fieldName: string]: string }) {
-        this.validationErrors = errors;
+    private updateFieldValue(fieldName: string, value: any, pristineValue) {
+        this.fieldStates[fieldName] = {
+            ...this.fieldStates[fieldName],
+            value,
+            validationError: undefined,
+            pristine: pristineValue
+        };
+    }
 
-        const fieldNames = Object.keys(this.validationErrors);
+    public setValidationErrors(errors: { [fieldName: string]: string }) {
+        const fieldNames = Object.keys(errors);
+
+        fieldNames.forEach((fieldName) => {
+            this.fieldStates[fieldName] = {
+                ...this.fieldStates[fieldName],
+                validationError: errors[fieldName]
+            };
+        });
+
         this.triggerMultipleFieldListeners(fieldNames);
     }
 
-    public getValidationError(fieldName: string): string | undefined {
-        return this.validationErrors[fieldName];
-    }
-
-    public listenForFieldChange(fieldName: string, callback: (value: any) => void) {
+    public listenForFieldChange(fieldName: string, callback: (value: FieldState) => void) {
         if (typeof this.fieldListeners[fieldName] === 'undefined') {
             this.fieldListeners[fieldName] = [];
         }
@@ -53,7 +65,7 @@ export class Form {
 
     private triggerFieldListeners(fieldName: string) {
         if (typeof this.fieldListeners[fieldName] !== 'undefined') {
-            this.fieldListeners[fieldName].forEach((callback) => callback(this.getFieldValue(fieldName)));
+            this.fieldListeners[fieldName].forEach((callback) => callback(this.getFieldState(fieldName)));
         }
     }
 
