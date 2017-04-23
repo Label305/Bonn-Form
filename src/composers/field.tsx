@@ -1,5 +1,6 @@
 import * as React from 'react';
 import {FormProps} from './bonn';
+import {FieldState} from '../business/form';
 export interface FieldProps {
     value: any;
     validationError: string | undefined;
@@ -20,7 +21,9 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
     return class extends React.Component<Props & OwnProps & FormProps, { value: any }> {
 
         public state: { value: any } = {
-            value: this.props.form.getFieldValue(this.getFieldName())
+            value: (typeof this.props.form.getFieldState(this.getFieldName()) !== 'undefined')
+                ? (this.props.form.getFieldState(this.getFieldName()) as FieldState).value
+                : ''
         };
 
         public getFieldName(): string {
@@ -36,13 +39,13 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
 
         public componentWillMount() {
             if (typeof this.props.value !== 'undefined') {
-                this.props.form.setFieldValue(this.getFieldName(), this.props.value);
+                this.props.form.initialiseFieldValue(this.getFieldName(), this.props.value);
             }
         }
 
         public componentWillUpdate(nextProps: Props & OwnProps & FormProps) {
             if (typeof nextProps.value !== 'undefined' && this.props.value !== nextProps.value) {
-                this.props.form.setFieldValue(this.getFieldName(), nextProps.value);
+                this.props.form.initialiseFieldValue(this.getFieldName(), nextProps.value);
             }
         }
 
@@ -59,10 +62,11 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
         }
 
         public render() {
+            const fieldState = this.props.form.getFieldState(this.getFieldName());
             return <WrappedComponent
                 {...this.props}
                 value={this.state.value}
-                validationError={this.props.form.getValidationError(this.getFieldName())}
+                validationError={(typeof fieldState !== 'undefined') ? fieldState.validationError : undefined}
                 onChange={this.handleChange.bind(this)}
             />;
         }

@@ -19,7 +19,10 @@ export function Listener<Props>(WrappedComponent: IncomingListener<Props>, field
         public getValues(): any {
             const result: any = {};
             fieldNames.forEach(fieldName => {
-                result[fieldName] = this.props.form.getFieldValue(fieldName);
+                const fieldState = this.props.form.getFieldState(fieldName);
+                if (typeof fieldState !== 'undefined') {
+                    result[fieldName] = fieldState.value;
+                }
             });
 
             return result;
