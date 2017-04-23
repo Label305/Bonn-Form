@@ -39,13 +39,13 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
 
         public componentWillMount() {
             if (typeof this.props.value !== 'undefined') {
-                this.props.form.setFieldValue(this.getFieldName(), this.props.value, true);
+                this.props.form.initialiseFieldValue(this.getFieldName(), this.props.value);
             }
         }
 
         public componentWillUpdate(nextProps: Props & OwnProps & FormProps) {
             if (typeof nextProps.value !== 'undefined' && this.props.value !== nextProps.value) {
-                this.props.form.setFieldValue(this.getFieldName(), nextProps.value, true);
+                this.props.form.initialiseFieldValue(this.getFieldName(), nextProps.value);
             }
         }
 
@@ -58,7 +58,7 @@ export function Field<Props>(WrappedComponent: IncomingField<Props>,
         }
 
         private handleChange(value: any) {
-            this.props.form.setFieldValue(this.getFieldName(), value, false);
+            this.props.form.setFieldValue(this.getFieldName(), value);
         }
 
         public render() {

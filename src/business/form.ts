@@ -13,22 +13,37 @@ export class Form {
         return this.fieldStates[fieldName];
     }
 
-    public setFieldValues(values: { [fieldName: string]: any }, pristineValues = false) {
+    public initialiseFieldValues(values: { [fieldName: string]: any }) {
         const fieldNames = Object.keys(values);
         fieldNames.forEach((fieldName) => {
-            this.updateFieldValue(fieldName, values[fieldName], pristineValues);
+            this.updateFieldValue(fieldName, values[fieldName], true);
         });
 
         this.triggerMultipleFieldListeners(fieldNames);
     }
 
-    public setFieldValue(fieldName: string, value: any, pristineValue = false) {
-        this.updateFieldValue(fieldName, value, pristineValue);
+    public setFieldValues(values: { [fieldName: string]: any }) {
+        const fieldNames = Object.keys(values);
+        fieldNames.forEach((fieldName) => {
+            this.updateFieldValue(fieldName, values[fieldName], false);
+        });
+
+        this.triggerMultipleFieldListeners(fieldNames);
+    }
+
+    public initialiseFieldValue(fieldName: string, value: any) {
+        this.updateFieldValue(fieldName, value, true);
 
         this.triggerFieldListeners(fieldName);
     }
 
-    private updateFieldValue(fieldName: string, value: any, pristineValue) {
+    public setFieldValue(fieldName: string, value: any) {
+        this.updateFieldValue(fieldName, value, false);
+
+        this.triggerFieldListeners(fieldName);
+    }
+
+    private updateFieldValue(fieldName: string, value: any, pristineValue: boolean) {
         this.fieldStates[fieldName] = {
             ...this.fieldStates[fieldName],
             value,
